@@ -30,15 +30,18 @@ export function GameResult({ result, onNewAttempt, onShare }: GameResultProps) {
   return (
     <section className="flex h-full min-h-0 flex-col justify-center" aria-live="polite">
       <div className="mx-auto w-full max-w-[34rem]">
-        <div className="mb-2 flex items-center gap-2">
-          <span className="inline-flex rounded-full bg-[#2f7e4b] px-2.5 py-1 text-[0.62rem] font-black uppercase tracking-[0.14em] text-white">
-            Treino concluído
-          </span>
-          {result.isNewBest && result.stats.attempts > 1 ? (
-            <span className="rounded-full bg-[#e7b651] px-2.5 py-1 text-[0.62rem] font-black uppercase tracking-[0.14em] text-[#201b0e]">
-              Novo recorde
+        <div className="mb-3 text-center">
+          <p className="urna-fim">FIM</p>
+          <div className="mt-3 flex items-center justify-center gap-2">
+            <span className="inline-flex rounded-sm bg-[#2f7e4b] px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-white">
+              Treino concluído
             </span>
-          ) : null}
+            {result.isNewBest && result.stats.attempts > 1 ? (
+              <span className="rounded-sm bg-[#e85d1c] px-2.5 py-1 text-[0.62rem] font-bold uppercase tracking-[0.14em] text-white">
+                Novo recorde
+              </span>
+            ) : null}
+          </div>
         </div>
 
         <div className="flex items-end justify-between gap-3">
@@ -76,7 +79,10 @@ export function GameResult({ result, onNewAttempt, onShare }: GameResultProps) {
         </dl>
 
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <Button onClick={onNewAttempt} className="col-span-2 min-h-12">
+          <Button
+            onClick={onNewAttempt}
+            className="col-span-2 min-h-12 bg-[#3ea34a] text-white shadow-[0_4px_0_#1e5c26] hover:bg-[#46b352] active:shadow-[0_2px_0_#1e5c26]"
+          >
             TREINAR NOVAMENTE
           </Button>
           <Link

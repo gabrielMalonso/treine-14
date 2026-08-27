@@ -1,6 +1,7 @@
 import { TARGET_NUMBER } from "@shared/game";
 import { GameResult } from "@/components/game/GameResult";
 import { TimerDisplay } from "@/components/game/TimerDisplay";
+import { candidate } from "@/config/candidate";
 import type { GameSession } from "@/types";
 import { CandidatePanel } from "./CandidatePanel";
 import { NumberDisplay } from "./NumberDisplay";
@@ -9,30 +10,26 @@ type MachineScreenProps = {
   session: GameSession;
   startedAt: number | null;
   error: string | null;
+  blankVote: boolean;
   onNewAttempt: () => void;
   onShare: () => Promise<"shared" | "copied" | "failed">;
 };
 
-function getInstruction(session: GameSession): string {
-  if (session.status === "idle") {
-    return "Digite 14. O cronômetro começa na primeira tecla.";
-  }
-
-  if (session.status === "candidate") {
-    return "Dados reconhecidos. Aperte CONFIRMA.";
-  }
-
-  if (session.digits.length === TARGET_NUMBER.length) {
-    return "Digite 14 para concluir o treino. Use CORRIGE.";
-  }
-
-  return "Continue digitando.";
+function VoteFooter() {
+  return (
+    <>
+      <p>Aperte a tecla:</p>
+      <p>CONFIRMA para CONFIRMAR este voto</p>
+      <p>CORRIGE para REINICIAR este voto</p>
+    </>
+  );
 }
 
 export function MachineScreen({
   session,
   startedAt,
   error,
+  blankVote,
   onNewAttempt,
   onShare
 }: MachineScreenProps) {
@@ -44,40 +41,45 @@ export function MachineScreen({
     );
   }
 
-  const candidateVisible = session.status === "candidate";
+  const candidateVisible = session.status === "candidate" && !blankVote;
+  const unrecognized =
+    !candidateVisible && !blankVote && session.digits.length === TARGET_NUMBER.length;
 
   return (
-    <section className="machine-display flex min-h-0 flex-col p-4 sm:p-6">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <p className="text-[0.62rem] font-black uppercase tracking-[0.18em] text-[var(--screen-muted)]">
-            Equipamento de treino
-          </p>
-          <h1 className="mt-1 text-xl font-black tracking-[-0.03em] sm:text-2xl">TREINE O 14</h1>
+    <section className="machine-display" aria-label={`Tela de votação para ${candidate.office}`}>
+      <div className="urna-lcd">
+        <div className="urna-lcd-header">
+          <p className="urna-lcd-kicker">Seu voto para</p>
+          <p className="urna-lcd-banner">Treino</p>
+          <TimerDisplay startedAt={startedAt} status={session.status} />
         </div>
-        <TimerDisplay startedAt={startedAt} status={session.status} />
-      </div>
 
-      <div className="mt-4">
-        <p className="mb-1.5 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-[var(--screen-muted)]">
-          Número
-        </p>
-        <NumberDisplay digits={session.digits} />
-      </div>
+        {blankVote ? (
+          <>
+            <h1 className="urna-lcd-office">{candidate.office}</h1>
+            <p className="urna-lcd-blank">VOTO EM BRANCO</p>
+          </>
+        ) : candidateVisible ? (
+          <>
+            <h1 className="urna-lcd-office">{candidate.office}</h1>
+            <CandidatePanel digits={session.digits} />
+          </>
+        ) : (
+          <div className="urna-number-entry">
+            <h1 className="urna-lcd-office">{candidate.office}</h1>
+            <NumberDisplay digits={session.digits} />
+          </div>
+        )}
 
-      <div className="mt-4 min-h-0 flex-1">
-        <CandidatePanel visible={candidateVisible} />
-      </div>
-
-      <div
-        className={`mt-3 min-h-10 rounded-xl border px-3 py-2 text-sm font-bold ${
-          candidateVisible
-            ? "border-[#2f7e4b]/25 bg-[#2f7e4b]/10 text-[#285f3d]"
-            : "border-black/10 bg-black/[0.035] text-[var(--screen-muted)]"
-        }`}
-        aria-live="polite"
-      >
-        {error ?? getInstruction(session)}
+        <div className="urna-lcd-footer" aria-live="polite">
+          {error ? (
+            <p>{error}</p>
+          ) : unrecognized ? (
+            <p>Número não reconhecido. Use CORRIGE.</p>
+          ) : candidateVisible || blankVote ? (
+            <VoteFooter />
+          ) : null}
+        </div>
       </div>
     </section>
   );

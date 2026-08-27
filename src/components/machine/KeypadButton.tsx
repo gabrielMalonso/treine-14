@@ -1,27 +1,29 @@
 import { useState, type ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/cn";
+import { BrailleDots } from "./BrailleDots";
 
-type KeypadButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  digit: string;
+type PressableKeyProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  keyId: string;
 };
 
-export function KeypadButton({
-  digit,
+export function PressableKey({
+  keyId,
   className,
+  children,
   onPointerDown,
   onPointerUp,
   onPointerCancel,
   onPointerLeave,
   ...props
-}: KeypadButtonProps) {
+}: PressableKeyProps) {
   const [pressed, setPressed] = useState(false);
 
   return (
     <button
       type="button"
-      className={cn("keypad-key", className)}
+      className={cn(className)}
+      data-key={keyId}
       data-pressed={pressed ? "true" : "false"}
-      aria-label={`Tecla ${digit}`}
       onPointerDown={(event) => {
         setPressed(true);
         onPointerDown?.(event);
@@ -40,7 +42,25 @@ export function KeypadButton({
       }}
       {...props}
     >
-      {digit}
+      {children}
     </button>
+  );
+}
+
+type KeypadButtonProps = Omit<PressableKeyProps, "keyId" | "children"> & {
+  digit: string;
+};
+
+export function KeypadButton({ digit, className, ...props }: KeypadButtonProps) {
+  return (
+    <PressableKey
+      keyId={digit}
+      className={cn("keypad-key", className)}
+      aria-label={`Tecla ${digit}`}
+      {...props}
+    >
+      <span>{digit}</span>
+      <BrailleDots pattern={digit} />
+    </PressableKey>
   );
 }

@@ -1,3 +1,6 @@
+import pililiUrl from "@/assets/sounds/pilili.mp3";
+import teclaUrl from "@/assets/sounds/tecla.mp3";
+
 type Tone = {
   frequency: number;
   durationMs: number;
@@ -7,6 +10,7 @@ type Tone = {
 };
 
 let audioContext: AudioContext | null = null;
+const sampleBuffers = new Map<string, Promise<AudioBuffer | null>>();
 
 function getContext(): AudioContext | null {
   const AudioContextConstructor =
@@ -22,6 +26,8 @@ function getContext(): AudioContext | null {
   }
 
   audioContext ??= new AudioContextConstructor();
+  void loadSample(teclaUrl);
+  void loadSample(pililiUrl);
   return audioContext;
 }
 
@@ -63,31 +69,69 @@ async function playSequence(tones: Tone[]): Promise<void> {
   }
 }
 
+function loadSample(url: string): Promise<AudioBuffer | null> {
+  const cached = sampleBuffers.get(url);
+  if (cached) {
+    return cached;
+  }
+
+  const pending = (async () => {
+    const context = getContext();
+    if (!context) {
+      return null;
+    }
+
+    try {
+      const response = await fetch(url);
+      const data = await response.arrayBuffer();
+      return await context.decodeAudioData(data);
+    } catch {
+      return null;
+    }
+  })();
+
+  sampleBuffers.set(url, pending);
+  return pending;
+}
+
+async function playSample(url: string, fallback: Tone[]): Promise<void> {
+  const context = getContext();
+  if (!context) {
+    return;
+  }
+
+  try {
+    await ensureRunning(context);
+    const buffer = await loadSample(url);
+    if (!buffer) {
+      await playSequence(fallback);
+      return;
+    }
+
+    const source = context.createBufferSource();
+    const gain = context.createGain();
+    source.buffer = buffer;
+    gain.gain.setValueAtTime(0.85, context.currentTime);
+    source.connect(gain);
+    gain.connect(context.destination);
+    source.start();
+  } catch {
+    await playSequence(fallback);
+  }
+}
+
+const keyFallback: Tone[] = [{ frequency: 250, durationMs: 38, gain: 0.026, type: "square" }];
+const confirmFallback: Tone[] = [
+  { frequency: 2_200, durationMs: 110, gain: 0.05, type: "sine" },
+  { frequency: 2_200, durationMs: 110, delayMs: 150, gain: 0.05, type: "sine" },
+  { frequency: 2_200, durationMs: 110, delayMs: 300, gain: 0.05, type: "sine" },
+  { frequency: 2_200, durationMs: 180, delayMs: 450, gain: 0.055, type: "sine" }
+];
+
 export const soundEngine = {
-  key: () =>
-    playSequence([
-      {
-        frequency: 250,
-        durationMs: 38,
-        gain: 0.026,
-        type: "square"
-      }
-    ]),
-  correct: () =>
-    playSequence([
-      {
-        frequency: 180,
-        durationMs: 70,
-        gain: 0.028,
-        type: "triangle"
-      }
-    ]),
-  confirm: () =>
-    playSequence([
-      { frequency: 440, durationMs: 80, gain: 0.032 },
-      { frequency: 660, durationMs: 100, delayMs: 70, gain: 0.036 },
-      { frequency: 880, durationMs: 130, delayMs: 155, gain: 0.04 }
-    ]),
+  key: () => playSample(teclaUrl, keyFallback),
+  correct: () => playSample(teclaUrl, keyFallback),
+  confirm: () => playSample(pililiUrl, confirmFallback),
   record: () =>
     playSequence([
       { frequency: 660, durationMs: 90, gain: 0.025 },

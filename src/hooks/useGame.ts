@@ -18,6 +18,7 @@ export function useGame() {
   const recordSoundTimeoutRef = useRef<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [blankVote, setBlankVote] = useState(false);
 
   const transition = useCallback((event: GameEvent) => {
     const next = gameReducer(sessionRef.current, event);
@@ -33,6 +34,8 @@ export function useGame() {
         return;
       }
 
+      setBlankVote(false);
+
       if (current.digits.length === 0) {
         const now = performanceClock.now();
         startedAtRef.current = now;
@@ -46,17 +49,38 @@ export function useGame() {
     [playKey, transition]
   );
 
-  const correct = useCallback(() => {
-    if (submittingRef.current || sessionRef.current.status === "completed") {
-      return;
-    }
+  const resetInput = useCallback(
+    (sound: "correct" | "key") => {
+      if (submittingRef.current || sessionRef.current.status === "completed") {
+        return false;
+      }
 
-    startedAtRef.current = null;
-    setStartedAt(null);
-    setError(null);
-    transition({ type: "CORRECT" });
-    playCorrect();
-  }, [playCorrect, transition]);
+      startedAtRef.current = null;
+      setStartedAt(null);
+      setError(null);
+      transition({ type: "CORRECT" });
+
+      if (sound === "correct") {
+        playCorrect();
+      } else {
+        playKey();
+      }
+
+      return true;
+    },
+    [playCorrect, playKey, transition]
+  );
+
+  const correct = useCallback(() => {
+    setBlankVote(false);
+    resetInput("correct");
+  }, [resetInput]);
+
+  const blank = useCallback(() => {
+    if (resetInput("key")) {
+      setBlankVote(true);
+    }
+  }, [resetInput]);
 
   const confirm = useCallback(async () => {
     const current = sessionRef.current;
@@ -103,6 +127,7 @@ export function useGame() {
     startedAtRef.current = null;
     setStartedAt(null);
     setError(null);
+    setBlankVote(false);
     transition({ type: "NEW_ATTEMPT" });
   }, [transition]);
 
@@ -138,8 +163,10 @@ export function useGame() {
     startedAt,
     isSubmitting,
     error,
+    blankVote,
     pressDigit,
     correct,
+    blank,
     confirm,
     newAttempt,
     share

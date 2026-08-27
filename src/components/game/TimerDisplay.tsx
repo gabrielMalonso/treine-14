@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/cn";
 import { formatDuration } from "@/lib/formatting";
 import type { GameStatus } from "@/types";
 
 type TimerDisplayProps = {
   startedAt: number | null;
   status: GameStatus;
+  className?: string;
 };
 
-export function TimerDisplay({ startedAt, status }: TimerDisplayProps) {
+export function TimerDisplay({ startedAt, status, className }: TimerDisplayProps) {
   const [elapsedMs, setElapsedMs] = useState(0);
   const active = startedAt !== null && (status === "typing" || status === "candidate");
 
@@ -30,7 +32,7 @@ export function TimerDisplay({ startedAt, status }: TimerDisplayProps) {
 
   return (
     <div
-      className="font-mono text-sm font-bold tabular-nums text-[var(--text-secondary)]"
+      className={cn("urna-lcd-timer tabular-nums", className)}
       aria-label={`Cronômetro: ${formatDuration(elapsedMs)}`}
     >
       {active ? formatDuration(elapsedMs) : "0,00s"}
