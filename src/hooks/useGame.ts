@@ -106,7 +106,7 @@ export function useGame() {
       playConfirm();
 
       if (result.isNewBest && result.stats.attempts > 1) {
-        recordSoundTimeoutRef.current = window.setTimeout(playRecord, 220);
+        recordSoundTimeoutRef.current = window.setTimeout(playRecord, 1_200);
       }
     } catch {
       setError("Não foi possível registrar agora. Use CORRIGE e tente novamente.");
