@@ -5,6 +5,7 @@ import { candidate } from "@/config/candidate";
 import type { GameSession } from "@/types";
 import { CandidatePanel } from "./CandidatePanel";
 import { NumberDisplay } from "./NumberDisplay";
+import { UnrecognizedPanel } from "./UnrecognizedPanel";
 
 type MachineScreenProps = {
   session: GameSession;
@@ -21,6 +22,15 @@ function VoteFooter() {
       <p>Aperte a tecla:</p>
       <p>CONFIRMA para CONFIRMAR este voto</p>
       <p>CORRIGE para REINICIAR este voto</p>
+    </>
+  );
+}
+
+function WrongNumberFooter() {
+  return (
+    <>
+      <p>Aperte a tecla:</p>
+      <p>CORRIGE para tentar salvar o Brasil</p>
     </>
   );
 }
@@ -64,6 +74,11 @@ export function MachineScreen({
             <h1 className="urna-lcd-office">{candidate.office}</h1>
             <CandidatePanel digits={session.digits} />
           </>
+        ) : unrecognized ? (
+          <>
+            <h1 className="urna-lcd-office">{candidate.office}</h1>
+            <UnrecognizedPanel digits={session.digits} />
+          </>
         ) : (
           <div className="urna-number-entry">
             <h1 className="urna-lcd-office">{candidate.office}</h1>
@@ -75,7 +90,7 @@ export function MachineScreen({
           {error ? (
             <p>{error}</p>
           ) : unrecognized ? (
-            <p>Número não reconhecido. Use CORRIGE.</p>
+            <WrongNumberFooter />
           ) : candidateVisible || blankVote ? (
             <VoteFooter />
           ) : null}

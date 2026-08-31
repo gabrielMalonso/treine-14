@@ -546,6 +546,46 @@ button,
   letter-spacing: 0.04em;
 }
 
+.urna-wrong {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  gap: 0.55rem;
+}
+
+.urna-wrong-number {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.urna-wrong-message {
+  display: grid;
+  flex: 1;
+  place-content: center;
+  justify-items: center;
+  gap: 0.35rem;
+  text-align: center;
+}
+
+.urna-wrong-title {
+  margin: 0;
+  font-size: clamp(1.45rem, 3.6vw, 2.15rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.05;
+}
+
+.urna-wrong-sub {
+  margin: 0;
+  font-size: clamp(0.95rem, 2.2vw, 1.2rem);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
 .urna-lcd-footer {
   margin-top: auto;
   padding-top: 0.55rem;
@@ -686,6 +726,18 @@ button,
   .urna-lcd-office {
     margin-bottom: 0.4rem;
     font-size: 1.35rem;
+  }
+
+  .urna-wrong {
+    gap: 0.3rem;
+  }
+
+  .urna-wrong-title {
+    font-size: 1.35rem;
+  }
+
+  .urna-wrong-sub {
+    font-size: 0.92rem;
   }
 
   .urna-number-entry {
