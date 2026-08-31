@@ -546,6 +546,216 @@ button,
   letter-spacing: 0.04em;
 }
 
+.game-over-display {
+  position: relative;
+  background: #070504;
+  color: #fff;
+}
+
+.game-over-screen {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.game-over-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+  pointer-events: none;
+  user-select: none;
+}
+
+.game-over-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgb(0 0 0 / 0.18) 0%, rgb(0 0 0 / 0.08) 28%, rgb(0 0 0 / 0.42) 58%, rgb(0 0 0 / 0.78) 100%);
+  pointer-events: none;
+}
+
+.game-over-body {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  margin-top: auto;
+  margin-bottom: 17%;
+  justify-items: center;
+  gap: 0.7rem;
+  padding: 0 0.9rem;
+  text-align: center;
+  transform: rotate(-2.1deg);
+}
+
+.game-over-title {
+  margin: 0;
+  color: #ffe566;
+  font-family: "Press Start 2P", ui-monospace, "Courier New", monospace;
+  font-size: clamp(1.2rem, 4vw, 2.2rem);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  line-height: 1.15;
+  text-shadow:
+    3px 3px 0 #5a0b00,
+    0 0 18px rgb(0 0 0 / 0.85);
+}
+
+.game-over-line {
+  margin: 0;
+  max-width: 24rem;
+  color: #fff;
+  font-family: "Press Start 2P", ui-monospace, "Courier New", monospace;
+  font-size: clamp(0.58rem, 1.55vw, 0.78rem);
+  line-height: 1.55;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.game-over-stats {
+  margin: 0.15rem 0 0;
+  color: #f0d38a;
+  font-family: "Press Start 2P", ui-monospace, "Courier New", monospace;
+  font-size: clamp(0.48rem, 1.15vw, 0.58rem);
+  line-height: 1.5;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.game-over-hint {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 0.55rem 0.7rem 0.75rem;
+  color: #ffe566;
+  font-family: "Press Start 2P", ui-monospace, "Courier New", monospace;
+  font-size: clamp(0.48rem, 1.15vw, 0.58rem);
+  letter-spacing: 0.02em;
+  line-height: 1.55;
+  text-align: center;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.game-over-error {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.45rem;
+  left: 0.6rem;
+  z-index: 2;
+  margin: 0;
+  color: #ffd0c4;
+  font-size: 0.72rem;
+  text-align: center;
+  text-shadow: 0 1px 2px #000;
+}
+
+.victory-display {
+  position: relative;
+  background: #102018;
+  color: #fff;
+}
+
+.victory-bg {
+  object-position: center 58%;
+}
+
+.victory-scrim {
+  background: linear-gradient(
+    180deg,
+    rgb(0 0 0 / 0.04) 0%,
+    rgb(0 0 0 / 0.08) 42%,
+    rgb(0 0 0 / 0.38) 78%,
+    rgb(0 0 0 / 0.62) 100%
+  );
+}
+
+.victory-result {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  overflow-y: auto;
+  padding: 0.9rem 0.9rem 1.05rem;
+  text-align: center;
+}
+
+.victory-result-title {
+  margin: 0;
+  color: #e5ff63;
+  font-family: "Press Start 2P", ui-monospace, "Courier New", monospace;
+  font-size: clamp(1.15rem, 3.8vw, 2rem);
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  line-height: 1.15;
+  text-shadow:
+    3px 3px 0 #163000,
+    0 0 18px rgb(0 0 0 / 0.75);
+  transform: rotate(1.6deg);
+}
+
+.victory-result-time {
+  margin: 0.85rem 0 0;
+  color: #fff;
+  font-family: ui-monospace, "Courier New", monospace;
+  font-size: clamp(2.4rem, 8vw, 4.4rem);
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  line-height: 0.9;
+  text-shadow: 0 2px 12px rgb(0 0 0 / 0.65);
+}
+
+.victory-result-meta {
+  margin: 0.45rem 0 0;
+  color: #e5ff63;
+  font-size: 0.92rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 8px rgb(0 0 0 / 0.7);
+}
+
+.victory-result-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+  margin-top: 0.85rem;
+}
+
+.victory-result-links a,
+.victory-result-links button {
+  color: rgb(255 255 255 / 0.82);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 6px rgb(0 0 0 / 0.7);
+  text-transform: uppercase;
+  transition: color 120ms ease;
+}
+
+.victory-result-links a:hover,
+.victory-result-links button:hover {
+  color: #e5ff63;
+}
+
+.victory-result-auth {
+  margin-top: 0.55rem;
+  color: rgb(255 255 255 / 0.7);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-shadow: 0 1px 6px rgb(0 0 0 / 0.7);
+}
+
+.victory-result-auth:hover {
+  color: #fff;
+}
+
 .urna-lcd-footer {
   margin-top: auto;
   padding-top: 0.55rem;
@@ -686,6 +896,32 @@ button,
   .urna-lcd-office {
     margin-bottom: 0.4rem;
     font-size: 1.35rem;
+  }
+
+  .game-over-body {
+    margin-bottom: 14%;
+    gap: 0.45rem;
+  }
+
+  .game-over-title {
+    font-size: 1.05rem;
+  }
+
+  .game-over-hint {
+    padding-bottom: 0.45rem;
+  }
+
+  .victory-result {
+    padding: 0.55rem 0.65rem 0.7rem;
+  }
+
+  .victory-result-title {
+    font-size: 1.05rem;
+  }
+
+  .victory-result-time {
+    margin-top: 0.5rem;
+    font-size: 2.2rem;
   }
 
   .urna-number-entry {

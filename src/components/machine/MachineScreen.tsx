@@ -4,7 +4,9 @@ import { TimerDisplay } from "@/components/game/TimerDisplay";
 import { candidate } from "@/config/candidate";
 import type { GameSession } from "@/types";
 import { CandidatePanel } from "./CandidatePanel";
+import { GameOverScreen } from "./GameOverScreen";
 import { NumberDisplay } from "./NumberDisplay";
+import { VictoryStage } from "./VictoryScreen";
 
 type MachineScreenProps = {
   session: GameSession;
@@ -35,15 +37,33 @@ export function MachineScreen({
 }: MachineScreenProps) {
   if (session.status === "completed" && session.completed) {
     return (
-      <div className="machine-display result-display p-4 sm:p-6">
-        <GameResult result={session.completed} onNewAttempt={onNewAttempt} onShare={onShare} />
-      </div>
+      <section
+        className="machine-display victory-display result-display"
+        aria-label="Treino concluído"
+      >
+        <VictoryStage>
+          <GameResult result={session.completed} onNewAttempt={onNewAttempt} onShare={onShare} />
+        </VictoryStage>
+      </section>
     );
   }
 
   const candidateVisible = session.status === "candidate" && !blankVote;
   const unrecognized =
     !candidateVisible && !blankVote && session.digits.length === TARGET_NUMBER.length;
+
+  if (unrecognized) {
+    return (
+      <section className="machine-display game-over-display" aria-label="Game Over">
+        <GameOverScreen digits={session.digits} />
+        {error ? (
+          <p className="game-over-error" aria-live="polite">
+            {error}
+          </p>
+        ) : null}
+      </section>
+    );
+  }
 
   return (
     <section className="machine-display" aria-label={`Tela de votação para ${candidate.office}`}>
@@ -72,13 +92,7 @@ export function MachineScreen({
         )}
 
         <div className="urna-lcd-footer" aria-live="polite">
-          {error ? (
-            <p>{error}</p>
-          ) : unrecognized ? (
-            <p>Número não reconhecido. Use CORRIGE.</p>
-          ) : candidateVisible || blankVote ? (
-            <VoteFooter />
-          ) : null}
+          {error ? <p>{error}</p> : candidateVisible || blankVote ? <VoteFooter /> : null}
         </div>
       </div>
     </section>
